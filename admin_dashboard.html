@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0"><i class="bi bi-speedometer2"></i> Admin Dashboard</h4>
+    <div>
+        <span class="badge bg-secondary me-2">{{ leaves|length }} Total</span>
+        <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-2 col-6">
+        <div class="stats-card border border-2 border-primary">
+            <div class="stats-number text-primary">{{ stats.total }}</div>
+            <div class="text-muted">Total</div>
+        </div>
+    </div>
+    <div class="col-md-2 col-6">
+        <div class="stats-card border border-2 border-warning">
+            <div class="stats-number text-warning">{{ stats.pending }}</div>
+            <div class="text-muted">Pending</div>
+        </div>
+    </div>
+    <div class="col-md-2 col-6">
+        <div class="stats-card border border-2 border-success">
+            <div class="stats-number text-success">{{ stats.approved }}</div>
+            <div class="text-muted">Approved</div>
+        </div>
+    </div>
+    <div class="col-md-2 col-6">
+        <div class="stats-card border border-2 border-danger">
+            <div class="stats-number text-danger">{{ stats.rejected }}</div>
+            <div class="text-muted">Rejected</div>
+        </div>
+    </div>
+    <div class="col-md-2 col-6">
+        <div class="stats-card border border-2 border-info">
+            <div class="stats-number text-info">{{ stats.users }}</div>
+            <div class="text-muted">Users</div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter Bar -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="adminSearchInput" placeholder="Search by name or username..." onkeyup="adminFilterTable()">
+        </div>
+    </div>
+    <div class="col-md-6 text-end">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="adminFilterStatus('all')">All</button>
+            <button type="button" class="btn btn-outline-warning btn-sm" onclick="adminFilterStatus('pending')">Pending</button>
+            <button type="button" class="btn btn-outline-success btn-sm" onclick="adminFilterStatus('approved')">Approved</button>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="adminFilterStatus('rejected')">Rejected</button>
+        </div>
+    </div>
+</div>
+
+<!-- Leave Records Table -->
+{% if leaves %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle" id="adminLeaveTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leaves %}
+            <tr class="admin-leave-row" data-status="{{ leave.status }}">
+                <td>{{ loop.index }}</td>
+                <td><span class="badge bg-secondary">{{ leave.username }}</span></td>
+                <td><strong>{{ leave.name }}</strong></td>
+                <td>{{ leave.from_date }}</td>
+                <td>{{ leave.to_date }}</td>
+                <td>
+                    <span class="text-muted small" title="{{ leave.reason }}">
+                        {{ leave.reason[:30] }}{% if leave.reason|length > 30 %}...{% endif %}
+                    </span>
+                </td>
+                <td>
+                    {% if leave.status == 'pending' %}
+                        <span class="badge bg-warning text-dark badge-status">⏳ Pending</span>
+                    {% elif leave.status == 'approved' %}
+                        <span class="badge bg-success badge-status">✅ Approved</span>
+                    {% elif leave.status == 'rejected' %}
+                        <span class="badge bg-danger badge-status">❌ Rejected</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if leave.status == 'pending' %}
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('admin_action', leave_id=leave.id, action='approve') }}" 
+                               class="btn btn-outline-success" title="Approve">
+                               <i class="bi bi-check-lg"></i>
+                            </a>
+                            <a href="{{ url_for('admin_action', leave_id=leave.id, action='reject') }}" 
+                               class="btn btn-outline-danger" title="Reject">
+                               <i class="bi bi-x-lg"></i>
+                            </a>
+                        </div>
+                    {% else %}
+                        <span class="text-muted small">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-secondary mt-3">
+    <i class="bi bi-info-circle"></i> No leave records available.
+</div>
+{% endif %}
+
+<script>
+function adminFilterTable() {
+    const input = document.getElementById('adminSearchInput');
+    const filter = input.value.toLowerCase();
+    const rows = document.getElementsByClassName('admin-leave-row');
+    
+    for (let row of rows) {
+        const username = row.cells[1].textContent.toLowerCase();
+        const name = row.cells[2].textContent.toLowerCase();
+        if (username.includes(filter) || name.includes(filter)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+
+function adminFilterStatus(status) {
+    const rows = document.getElementsByClassName('admin-leave-row');
+    for (let row of rows) {
+        const rowStatus = row.getAttribute('data-status');
+        if (status === 'all' || rowStatus === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+</script>
+{% endblock %}

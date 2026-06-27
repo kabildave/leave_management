@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="auth-card card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-shield-lock"></i> Admin Login</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_login') }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Admin Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" name="username" placeholder="Enter admin username" required autofocus>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Admin Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" name="password" placeholder="Enter admin password" required>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> Admin Login
+                        </button>
+                    </div>
+                </form>
+                <hr class="my-3">
+                <p class="text-muted small text-center mb-0">
+                    <i class="bi bi-info-circle"></i> Default: <strong>admin</strong> / <strong>admin123</strong>
+                </p>
+                <p class="text-center mt-2">
+                    <a href="{{ url_for('login') }}" class="text-decoration-none">
+                        <i class="bi bi-arrow-left"></i> Back to User Login
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

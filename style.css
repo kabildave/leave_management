@@ -1,0 +1,32 @@
+/* Additional custom styles if needed */
+body {
+    background: #f4f7fc;
+}
+
+.card {
+    border-radius: 15px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn-apply {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 0.6rem 2rem;
+    border-radius: 40px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-apply:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+
+.badge-status {
+    font-size: 0.85rem;
+}
